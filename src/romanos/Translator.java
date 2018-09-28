@@ -1,45 +1,42 @@
 package romanos;
 
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class Translator {
 	
-	static HashMap<Integer, String> letters = new HashMap<Integer, String>();
-
-	private static String parse(int num) {
+	private static String parse(int num, String[] letters) {
 		
 		String result = "";
+		int test = num % 10;
 		
-		while (num > 0) {
-			
-			switch (num % 10) {
-			
-			case 1:
-			case 2:
-			case 3:
-				result = "Min * mod";
-				
-			case 6:
-			case 7:
-			case 8:
-				result = "Mid, Min * mod";
-				
-			case 4:
-				result = "Min, Mid";
-			case 9:
-				result = "Min, Max";
-				
-			case 5:
-				result = "Mid";
-				
-			case 0:
-				result = "Max";
+		switch (test) {
+		case 1:
+		case 2:
+		case 3:
+			for (int i = 0; i < test; i++) {
+				result += letters[0];
 			}
+			break;
+		case 4:
+			result = letters[0] + letters[1];
+			break;
+		case 5:
+			result = letters[1];
+			break;
+		case 9:
+			result += letters[0] + letters[2];
+			break;
+		case 6:
+		case 7:
+		case 8:
+			result += letters[1];
+			for (int i = 0; i < test - 5; i++) {
+				result += letters[0];
+			}
+			break;
 		}
 		return result;	
 	}
-	
 	
 	private static String translate(int test) {
 		
@@ -52,38 +49,35 @@ public class Translator {
 			result = "0";
 		}
 		else {
-			 
-			if (test > 100) {
-				letters.put(1000, "M");
-				letters.put(500, "D");
-				letters.put(100, "C");
-			}if (test > 10) {
-				letters.put(100, "C");
-				letters.put(50, "L");
-				letters.put(10, "X");
-			}if (test > 1) {
-				letters.put(10, "X");
-				letters.put(5, "V");
-				letters.put(1, "I");
-			}
+			String[] units = {"C", "D", "M"};
+			result = parse((test/100), units);
 			
-			result = parse(test);
+			String[] tens = {"X", "L", "C"}; 
+			result += parse((test/10), tens);
+			
+			String[] cents = {"I", "V", "X"};
+			result += parse((test), cents);
 		}		
 		return result;
 	}
 
 	public static void main(String[] args) {
 		
-		while (true) {
+		Scanner scan = new Scanner(System.in);
+
+		boolean flag = true;
+		while (flag) {
 			
-			Scanner scan = new Scanner(System.in);
 			int input = 0;
 			String text = "";
-			
-			System.out.println("Enter a number between 1 - 1000: ");
-			
+			System.out.println("Enter a number between 1 - 1000 or -1 to exit: ");
+						
 			try {
 				input = scan.nextInt();
+				if (input < 0) {
+					flag = !flag;
+					break;
+				}
 				text = translate(input);				
 				System.out.println("Your number is: " + text);
 			}			
@@ -92,5 +86,6 @@ public class Translator {
 			}
 			System.out.println();
 		}
+		scan.close();
 	}
 }
